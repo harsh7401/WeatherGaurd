@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from './auth/auth.module';
@@ -11,17 +11,22 @@ import { AdminModule } from './admin/admin.module';
     // Load environment variables globally
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
 
-    // Connect to MongoDB
-    MongooseModule.forRoot(process.env.MONGO_URI as string),
+    // MongoDB Connection
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+    }),
 
     // Feature Modules
     AuthModule,
     UsersModule,
     AdminModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

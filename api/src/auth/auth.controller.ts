@@ -1,7 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
-
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
@@ -14,7 +13,7 @@ export class AuthController {
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   async googleAuth() {
-    // Redirects to Google
+    // Passport redirects to Google
   }
 
   @Get('google/callback')

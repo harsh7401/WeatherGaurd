@@ -8,22 +8,18 @@ import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
-    // Load environment variables globally
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
 
-    // MongoDB Connection
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGO_URI'),
       }),
     }),
 
-    // Feature Modules
     AuthModule,
     UsersModule,
     AdminModule,

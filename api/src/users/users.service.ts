@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
 import { Model } from 'mongoose';
 
 import { User } from './schemas/user.schema';
+
+import { AuthProvider } from '../enums/provider.enum';
+import { Role } from '../enums/role.enum';
+import { UserStatus } from '../enums/status.enum';
 
 @Injectable()
 export class UsersService {
@@ -44,20 +47,22 @@ export class UsersService {
       providerId: profile.providerId,
       email: profile.email,
       name: profile.name,
-      provider: 'google',
-      role: 'USER',
-      status: 'PENDING',
+      provider: AuthProvider.GOOGLE,
+      role: Role.USER,
+      status: UserStatus.PENDING,
     });
 
     return user;
   }
 
-  // -----------------------
+  // ==========================
   // Admin Methods
-  // -----------------------
+  // ==========================
 
   async findPendingUsers() {
-    return this.userModel.find({ status: 'PENDING' }).exec();
+    return this.userModel.find({
+      status: UserStatus.PENDING,
+    }).exec();
   }
 
   async findAllUsers() {
@@ -68,7 +73,7 @@ export class UsersService {
     return this.userModel.findByIdAndUpdate(
       id,
       {
-        status: 'APPROVED',
+        status: UserStatus.APPROVED,
       },
       {
         new: true,
@@ -80,7 +85,7 @@ export class UsersService {
     return this.userModel.findByIdAndUpdate(
       id,
       {
-        status: 'REJECTED',
+        status: UserStatus.REJECTED,
       },
       {
         new: true,

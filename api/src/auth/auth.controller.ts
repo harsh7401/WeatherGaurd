@@ -1,9 +1,16 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
+import { AuthService } from './auth.service';
+
 import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+  ) {}
+
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   async googleAuth() {
@@ -12,10 +19,13 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  googleAuthRedirect(@Req() req: any) {
-    return {
-      message: 'Google Login Successful',
-      user: req.user,
-    };
+  async googleCallback(@Req() req: any) {
+    return this.authService.login(req.user);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@Req() req: any) {
+    return req.user;
   }
 }

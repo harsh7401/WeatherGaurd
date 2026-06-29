@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
 import { Model } from 'mongoose';
 
-import { User, UserDocument } from './schemas/user.schema';
-import { AuthProvider } from '../enums/provider.enum';
-import { Role } from '../enums/role.enum';
-import { UserStatus } from '../enums/status.enum';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
-    private readonly userModel: Model<UserDocument>,
+    private readonly userModel: Model<User>,
   ) {}
 
   async findByEmail(email: string) {
@@ -20,6 +18,10 @@ export class UsersService {
 
   async findByProviderId(providerId: string) {
     return this.userModel.findOne({ providerId }).exec();
+  }
+
+  async findById(id: string) {
+    return this.userModel.findById(id).exec();
   }
 
   async createUser(user: Partial<User>) {
@@ -39,15 +41,50 @@ export class UsersService {
     }
 
     user = await this.createUser({
-      name: profile.name,
-      email: profile.email,
-      provider: AuthProvider.GOOGLE,
       providerId: profile.providerId,
-      role: Role.USER,
-      status: UserStatus.PENDING,
-      telegramChatId: undefined,
+      email: profile.email,
+      name: profile.name,
+      provider: 'google',
+      role: 'USER',
+      status: 'PENDING',
     });
 
     return user;
+  }
+
+  // -----------------------
+  // Admin Methods
+  // -----------------------
+
+  async findPendingUsers() {
+    return this.userModel.find({ status: 'PENDING' }).exec();
+  }
+
+  async findAllUsers() {
+    return this.userModel.find().exec();
+  }
+
+  async approveUser(id: string) {
+    return this.userModel.findByIdAndUpdate(
+      id,
+      {
+        status: 'APPROVED',
+      },
+      {
+        new: true,
+      },
+    );
+  }
+
+  async rejectUser(id: string) {
+    return this.userModel.findByIdAndUpdate(
+      id,
+      {
+        status: 'REJECTED',
+      },
+      {
+        new: true,
+      },
+    );
   }
 }

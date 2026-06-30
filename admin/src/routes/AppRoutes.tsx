@@ -1,33 +1,39 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
-import Login from "../pages/Login/Login";
-import Dashboard from "../pages/Dashboard/Dashboard";
-import NotFound from "../pages/NotFound/NotFound";
+import LoginPage from "../pages/Login/LoginPage";
 import AuthCallback from "../pages/Login/AuthCallback";
+import NotFound from "../pages/NotFound";
 
-function AppRoutes() {
+import Dashboard from "../pages/Dashboard/Dashboard";
+
+import ProtectedRoute from "./ProtectedRoute";
+
+import AdminLayout from "../components/layout/AdminLayout";
+
+export default function AppRoutes() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
 
-        <Route
-          path="/auth/callback"
-          element={<AuthCallback />}
-        />
-
+      <Route
+        element={
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route
           path="/dashboard"
           element={<Dashboard />}
         />
+      </Route>
 
-        <Route
-          path="*"
-          element={<NotFound />}
-        />
-      </Routes>
-    </BrowserRouter>
+      <Route
+        path="*"
+        element={<NotFound />}
+      />
+    </Routes>
   );
 }
-
-export default AppRoutes;

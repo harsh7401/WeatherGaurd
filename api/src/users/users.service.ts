@@ -92,4 +92,26 @@ export class UsersService {
       },
     );
   }
+
+  // ==========================
+  // Dashboard Methods
+  // ==========================
+
+  async countUsers() {
+    return this.userModel.countDocuments();
+  }
+
+  async countUsersByStatus(status: UserStatus) {
+    return this.userModel.countDocuments({
+      status,
+    });
+  }
+
+  async getRecentUsers() {
+    return this.userModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .exec();
+  }
 }

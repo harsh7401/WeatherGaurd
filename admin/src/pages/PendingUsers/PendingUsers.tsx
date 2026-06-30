@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import toast from "react-hot-toast";
+
 import UserTable from "../../components/users/UserTable";
 
 import {
@@ -18,8 +20,8 @@ export default function PendingUsers() {
     try {
       const data = await getPendingUsers();
       setUsers(data);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      toast.error("Failed to load users");
     } finally {
       setLoading(false);
     }
@@ -30,18 +32,44 @@ export default function PendingUsers() {
   }, []);
 
   async function handleApprove(id: string) {
-    await approveUser(id);
-    loadUsers();
+    const confirmed = window.confirm(
+      "Approve this user?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await approveUser(id);
+
+      toast.success("User approved");
+
+      loadUsers();
+    } catch {
+      toast.error("Approval failed");
+    }
   }
 
   async function handleReject(id: string) {
-    await rejectUser(id);
-    loadUsers();
+    const confirmed = window.confirm(
+      "Reject this user?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await rejectUser(id);
+
+      toast.success("User rejected");
+
+      loadUsers();
+    } catch {
+      toast.error("Reject failed");
+    }
   }
 
   if (loading) {
     return (
-      <div className="rounded-2xl bg-white p-12 text-center shadow-sm border border-slate-200">
+      <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
         Loading users...
       </div>
     );
@@ -50,7 +78,7 @@ export default function PendingUsers() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-slate-800">
+        <h1 className="text-3xl font-bold">
           Pending Users
         </h1>
 

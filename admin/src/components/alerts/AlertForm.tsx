@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { Alert } from "../../types/alert";
 
@@ -9,7 +9,11 @@ type Props = {
     title: string;
     description: string;
     city: string;
-    severity: Alert["severity"];
+    severity:
+      | "LOW"
+      | "MEDIUM"
+      | "HIGH"
+      | "CRITICAL";
   }) => void;
 
   onCancel: () => void;
@@ -20,22 +24,30 @@ export default function AlertForm({
   onSubmit,
   onCancel,
 }: Props) {
-  const [title, setTitle] = useState(
-    initialData?.title ?? ""
-  );
+  const [title, setTitle] = useState("");
 
-  const [description, setDescription] = useState(
-    initialData?.description ?? ""
-  );
+  const [description, setDescription] =
+    useState("");
 
-  const [city, setCity] = useState(
-    initialData?.city ?? ""
-  );
+  const [city, setCity] = useState("");
 
-  const [severity, setSeverity] =
-    useState<Alert["severity"]>(
-      initialData?.severity ?? "MEDIUM"
-    );
+  const [severity, setSeverity] = useState<
+    "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
+  >("MEDIUM");
+
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title);
+      setDescription(initialData.description);
+      setCity(initialData.city);
+      setSeverity(initialData.severity);
+    } else {
+      setTitle("");
+      setDescription("");
+      setCity("");
+      setSeverity("MEDIUM");
+    }
+  }, [initialData]);
 
   return (
     <form
@@ -53,16 +65,18 @@ export default function AlertForm({
     >
       <input
         className="w-full rounded-lg border p-3"
-        value={title}
         placeholder="Title"
-        onChange={(e) => setTitle(e.target.value)}
+        value={title}
+        onChange={(e) =>
+          setTitle(e.target.value)
+        }
       />
 
       <textarea
         className="w-full rounded-lg border p-3"
         rows={4}
-        value={description}
         placeholder="Description"
+        value={description}
         onChange={(e) =>
           setDescription(e.target.value)
         }
@@ -70,9 +84,11 @@ export default function AlertForm({
 
       <input
         className="w-full rounded-lg border p-3"
-        value={city}
         placeholder="City"
-        onChange={(e) => setCity(e.target.value)}
+        value={city}
+        onChange={(e) =>
+          setCity(e.target.value)
+        }
       />
 
       <select
@@ -80,14 +96,20 @@ export default function AlertForm({
         value={severity}
         onChange={(e) =>
           setSeverity(
-            e.target.value as Alert["severity"]
+            e.target.value as
+              | "LOW"
+              | "MEDIUM"
+              | "HIGH"
+              | "CRITICAL"
           )
         }
       >
         <option value="LOW">LOW</option>
         <option value="MEDIUM">MEDIUM</option>
         <option value="HIGH">HIGH</option>
-        <option value="CRITICAL">CRITICAL</option>
+        <option value="CRITICAL">
+          CRITICAL
+        </option>
       </select>
 
       <div className="flex justify-end gap-3">
@@ -101,7 +123,7 @@ export default function AlertForm({
 
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-5 py-2 text-white"
+          className="rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
         >
           {initialData
             ? "Update Alert"

@@ -36,11 +36,18 @@ export default function Alerts() {
     title: string;
     description: string;
     city: string;
-    severity: Alert["severity"];
+    severity:
+      | "LOW"
+      | "MEDIUM"
+      | "HIGH"
+      | "CRITICAL";
   }) {
     try {
       if (selectedAlert) {
-        await updateAlert(selectedAlert._id, data);
+        await updateAlert(
+          selectedAlert._id,
+          data
+        );
       } else {
         await createAlert(data);
       }
@@ -55,12 +62,16 @@ export default function Alerts() {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Delete this alert?")) {
+    if (
+      !window.confirm(
+        "Delete this alert?"
+      )
+    )
       return;
-    }
 
     try {
       await deleteAlert(id);
+
       await loadAlerts();
     } catch (err) {
       console.error(err);
@@ -72,7 +83,7 @@ export default function Alerts() {
     setOpen(true);
   }
 
-  function handleNewAlert() {
+  function handleCreate() {
     setSelectedAlert(null);
     setOpen(true);
   }
@@ -92,7 +103,7 @@ export default function Alerts() {
           </div>
 
           <button
-            onClick={handleNewAlert}
+            onClick={handleCreate}
             className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700"
           >
             + New Alert

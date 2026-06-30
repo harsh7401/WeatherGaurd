@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 
-import LoginPage from "../pages/Login/LoginPage";
+import LoginPage from "../pages/Login/Login";
 import AuthCallback from "../pages/Login/AuthCallback";
-import NotFound from "../pages/NotFound";
+import NotFound from "../pages/NotFound/NotFound";
 
 import Dashboard from "../pages/Dashboard/Dashboard";
 
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRoute from "../routes/ProtectedRoute";
 
 import AdminLayout from "../components/layout/AdminLayout";
 

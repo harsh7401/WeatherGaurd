@@ -2,15 +2,15 @@ import {
   Controller,
   Get,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 
 import { AuthService } from './auth.service';
 
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-
-import { CurrentUser } from '../decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -18,24 +18,28 @@ export class AuthController {
     private readonly authService: AuthService,
   ) {}
 
-  // Login with Google
   @Get('google')
   @UseGuards(GoogleAuthGuard)
-  async googleAuth(): Promise<void> {
+  async googleAuth() {
     // Passport redirects to Google
   }
 
-  // Google Callback
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleCallback(@Req() req: any) {
-    return this.authService.login(req.user);
+  async googleCallback(
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    const result = await this.authService.login(req.user);
+
+    return res.redirect(
+      `http://localhost:5173/auth/callback?token=${result.accessToken}`,
+    );
   }
 
-  // Get Current Logged-in User
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@CurrentUser() user: any) {
-    return user;
+  getProfile(@Req() req: any) {
+    return req.user;
   }
 }

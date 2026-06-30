@@ -1,60 +1,81 @@
 import {
-  FiHome,
-  FiUsers,
-  FiSettings,
-  FiLogOut,
-} from "react-icons/fi";
+  LayoutDashboard,
+  Users,
+  Settings,
+  LogOut,
+  CloudLightning,
+} from "lucide-react";
 
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
+import { useAuth } from "../../context/AuthContext";
 
 export default function Sidebar() {
-  const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 ${
+      isActive
+        ? "bg-blue-600 text-white shadow-md"
+        : "text-slate-300 hover:bg-slate-800 hover:text-white"
+    }`;
 
   return (
-    <div className="w-64 min-h-screen bg-slate-900 text-white flex flex-col">
-      <div className="border-b border-slate-700 p-6 text-2xl font-bold">
-        WeatherGuard
+    <aside className="flex h-screen w-72 flex-col bg-slate-900 text-white">
+      {/* Logo */}
+      <div className="flex items-center gap-3 border-b border-slate-800 px-6 py-6">
+        <div className="rounded-xl bg-blue-600 p-2">
+          <CloudLightning size={26} />
+        </div>
+
+        <div>
+          <h1 className="text-xl font-bold">
+            WeatherGuard
+          </h1>
+
+          <p className="text-sm text-slate-400">
+            Admin Panel
+          </p>
+        </div>
       </div>
 
-      <nav className="mt-6 flex flex-col flex-1">
-        <Link
+      {/* Navigation */}
+      <nav className="flex-1 space-y-2 p-4">
+        <NavLink
           to="/dashboard"
-          className="flex items-center gap-3 px-6 py-4 transition hover:bg-slate-800"
+          className={linkClass}
         >
-          <FiHome size={20} />
-          <span>Dashboard</span>
-        </Link>
+          <LayoutDashboard size={20} />
+          Dashboard
+        </NavLink>
 
-        <Link
+        <NavLink
           to="/pending-users"
-          className="flex items-center gap-3 px-6 py-4 transition hover:bg-slate-800"
+          className={linkClass}
         >
-          <FiUsers size={20} />
-          <span>Pending Users</span>
-        </Link>
+          <Users size={20} />
+          Pending Users
+        </NavLink>
 
-        <Link
+        <NavLink
           to="/settings"
-          className="flex items-center gap-3 px-6 py-4 transition hover:bg-slate-800"
+          className={linkClass}
         >
-          <FiSettings size={20} />
-          <span>Settings</span>
-        </Link>
+          <Settings size={20} />
+          Settings
+        </NavLink>
+      </nav>
 
+      {/* Footer */}
+      <div className="border-t border-slate-800 p-4">
         <button
           onClick={logout}
-          className="mt-auto flex items-center gap-3 px-6 py-4 text-left transition hover:bg-red-600"
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-slate-300 transition hover:bg-red-600 hover:text-white"
         >
-          <FiLogOut size={20} />
-          <span>Logout</span>
+          <LogOut size={20} />
+          Logout
         </button>
-      </nav>
-    </div>
+      </div>
+    </aside>
   );
 }

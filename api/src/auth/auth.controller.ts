@@ -5,8 +5,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
-
+import type { Response } from 'express';
 import { AuthService } from './auth.service';
 
 import { GoogleAuthGuard } from './guards/google-auth.guard';

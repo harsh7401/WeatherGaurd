@@ -5,6 +5,8 @@ import type { Alert } from "../../types/alert";
 type Props = {
   initialData?: Alert | null;
 
+  loading?: boolean;
+
   onSubmit: (data: {
     title: string;
     description: string;
@@ -21,16 +23,14 @@ type Props = {
 
 export default function AlertForm({
   initialData,
+  loading = false,
   onSubmit,
   onCancel,
 }: Props) {
   const [title, setTitle] = useState("");
-
   const [description, setDescription] =
     useState("");
-
   const [city, setCity] = useState("");
-
   const [severity, setSeverity] = useState<
     "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
   >("MEDIUM");
@@ -67,6 +67,7 @@ export default function AlertForm({
         className="w-full rounded-lg border p-3"
         placeholder="Title"
         value={title}
+        disabled={loading}
         onChange={(e) =>
           setTitle(e.target.value)
         }
@@ -77,6 +78,7 @@ export default function AlertForm({
         rows={4}
         placeholder="Description"
         value={description}
+        disabled={loading}
         onChange={(e) =>
           setDescription(e.target.value)
         }
@@ -86,6 +88,7 @@ export default function AlertForm({
         className="w-full rounded-lg border p-3"
         placeholder="City"
         value={city}
+        disabled={loading}
         onChange={(e) =>
           setCity(e.target.value)
         }
@@ -94,6 +97,7 @@ export default function AlertForm({
       <select
         className="w-full rounded-lg border p-3"
         value={severity}
+        disabled={loading}
         onChange={(e) =>
           setSeverity(
             e.target.value as
@@ -115,17 +119,21 @@ export default function AlertForm({
       <div className="flex justify-end gap-3">
         <button
           type="button"
+          disabled={loading}
           onClick={onCancel}
-          className="rounded-lg border px-5 py-2"
+          className="rounded-lg border px-5 py-2 disabled:opacity-50"
         >
           Cancel
         </button>
 
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
+          disabled={loading}
+          className="rounded-lg bg-blue-600 px-5 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {initialData
+          {loading
+            ? "Saving..."
+            : initialData
             ? "Update Alert"
             : "Create Alert"}
         </button>

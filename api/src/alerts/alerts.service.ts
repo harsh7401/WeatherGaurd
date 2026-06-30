@@ -11,23 +11,36 @@ import { Alert } from './schemas/alert.schema';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import { UpdateAlertDto } from './dto/update-alert.dto';
 
+import { TelegramService } from '../telegram/telegram.service';
+
 @Injectable()
 export class AlertsService {
   constructor(
     @InjectModel(Alert.name)
     private readonly alertModel: Model<Alert>,
+
+    private readonly telegramService: TelegramService,
   ) {}
 
   async create(createAlertDto: CreateAlertDto) {
     const alert = new this.alertModel(createAlertDto);
-    return alert.save();
+
+    const savedAlert = await alert.save();
+
+    await this.telegramService.sendAlert({
+      title: savedAlert.title,
+      description: savedAlert.description,
+      city: savedAlert.city,
+      severity: savedAlert.severity,
+    });
+
+    return savedAlert;
   }
 
   async findAll() {
     return this.alertModel
       .find()
-      .sort({ createdAt: -1 })
-      .exec();
+      .sort({ createdAt: -1 });
   }
 
   async findOne(id: string) {

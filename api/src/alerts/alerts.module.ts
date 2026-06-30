@@ -4,10 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AlertsController } from './alerts.controller';
 import { AlertsService } from './alerts.service';
 
-import {
-  Alert,
-  AlertSchema,
-} from './schemas/alert.schema';
+import { Alert, AlertSchema } from './schemas/alert.schema';
+
+import { TelegramModule } from '../telegram/telegram.module';
 
 @Module({
   imports: [
@@ -17,6 +16,7 @@ import {
         schema: AlertSchema,
       },
     ]),
+    TelegramModule,
   ],
   controllers: [AlertsController],
   providers: [AlertsService],

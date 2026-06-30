@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import toast from "react-hot-toast";
+
 import AlertTable from "../../components/alerts/AlertTable";
 import AlertModal from "../../components/alerts/AlertModal";
 
@@ -16,6 +18,9 @@ export default function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [open, setOpen] = useState(false);
 
+  const [loading, setLoading] =
+    useState(false);
+
   const [selectedAlert, setSelectedAlert] =
     useState<Alert | null>(null);
 
@@ -29,6 +34,7 @@ export default function Alerts() {
       setAlerts(data);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to load alerts");
     }
   }
 
@@ -42,14 +48,24 @@ export default function Alerts() {
       | "HIGH"
       | "CRITICAL";
   }) {
+    setLoading(true);
+
     try {
       if (selectedAlert) {
         await updateAlert(
           selectedAlert._id,
           data
         );
+
+        toast.success(
+          "Alert updated successfully"
+        );
       } else {
         await createAlert(data);
+
+        toast.success(
+          "Alert created successfully"
+        );
       }
 
       setOpen(false);
@@ -58,6 +74,10 @@ export default function Alerts() {
       await loadAlerts();
     } catch (err) {
       console.error(err);
+
+      toast.error("Failed to save alert");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -66,15 +86,20 @@ export default function Alerts() {
       !window.confirm(
         "Delete this alert?"
       )
-    )
+    ) {
       return;
+    }
 
     try {
       await deleteAlert(id);
 
+      toast.success("Alert deleted");
+
       await loadAlerts();
     } catch (err) {
       console.error(err);
+
+      toast.error("Failed to delete alert");
     }
   }
 
@@ -98,13 +123,14 @@ export default function Alerts() {
             </h1>
 
             <p className="mt-2 text-slate-500">
-              Manage weather alerts across cities.
+              Manage weather alerts across
+              cities.
             </p>
           </div>
 
           <button
             onClick={handleCreate}
-            className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
           >
             + New Alert
           </button>
@@ -119,11 +145,12 @@ export default function Alerts() {
 
       <AlertModal
         open={open}
+        loading={loading}
+        initialData={selectedAlert}
         onClose={() => {
           setOpen(false);
           setSelectedAlert(null);
         }}
-        initialData={selectedAlert}
         onSubmit={handleSubmit}
       />
     </>

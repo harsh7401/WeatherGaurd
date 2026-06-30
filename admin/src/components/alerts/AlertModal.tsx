@@ -4,6 +4,9 @@ import type { Alert } from "../../types/alert";
 
 type Props = {
   open: boolean;
+
+  loading?: boolean;
+
   onClose: () => void;
 
   initialData?: Alert | null;
@@ -22,6 +25,7 @@ type Props = {
 
 export default function AlertModal({
   open,
+  loading = false,
   onClose,
   initialData,
   onSubmit,
@@ -39,6 +43,7 @@ export default function AlertModal({
 
         <AlertForm
           initialData={initialData}
+          loading={loading}
           onSubmit={onSubmit}
           onCancel={onClose}
         />

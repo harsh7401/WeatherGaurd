@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import UserTable from "../../components/users/UserTable";
 
 import {
-  getPendingUsers,
   approveUser,
+  getPendingUsers,
   rejectUser,
 } from "../../services/admin";
 
@@ -18,8 +18,8 @@ export default function PendingUsers() {
     try {
       const data = await getPendingUsers();
       setUsers(data);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -30,42 +30,32 @@ export default function PendingUsers() {
   }, []);
 
   async function handleApprove(id: string) {
-    try {
-      await approveUser(id);
-
-      setUsers((prev) =>
-        prev.filter((user) => user._id !== id),
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    await approveUser(id);
+    loadUsers();
   }
 
   async function handleReject(id: string) {
-    try {
-      await rejectUser(id);
-
-      setUsers((prev) =>
-        prev.filter((user) => user._id !== id),
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    await rejectUser(id);
+    loadUsers();
   }
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return (
+      <div className="rounded-2xl bg-white p-12 text-center shadow-sm border border-slate-200">
+        Loading users...
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-3xl font-bold text-slate-800">
           Pending Users
         </h1>
 
-        <p className="text-gray-500">
-          Review and approve user access requests.
+        <p className="mt-2 text-slate-500">
+          Review and approve new user registrations.
         </p>
       </div>
 

@@ -14,7 +14,9 @@ import { AlertsModule } from './alerts/alerts.module';
       isGlobal: true,
     }),
 
-    MongooseModule.forRoot(process.env.MONGO_URI as string),
+    MongooseModule.forRoot(
+      process.env.MONGO_URI as string,
+    ),
 
     AuthModule,
     UsersModule,

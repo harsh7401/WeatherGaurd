@@ -5,6 +5,7 @@ import AuthCallback from "../pages/Login/AuthCallback";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import PendingUsers from "../pages/PendingUsers/PendingUsers";
 import NotFound from "../pages/NotFound/NotFound";
+import Alerts from "../pages/Alerts/Alerts";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -32,6 +33,11 @@ export default function AppRoutes() {
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
+
+      <Route
+  path="/alerts"
+  element={<Alerts />}
+/>
     </Routes>
   );
 }

@@ -58,6 +58,14 @@ export default function Sidebar() {
         </NavLink>
 
         <NavLink
+          to="/alerts"
+          className={linkClass}
+        >
+          <Users size={20} />
+          Alerts
+        </NavLink>
+
+        <NavLink
           to="/settings"
           className={linkClass}
         >

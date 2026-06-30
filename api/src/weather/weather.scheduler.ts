@@ -3,6 +3,7 @@ import { Cron } from '@nestjs/schedule';
 
 import { AlertsService } from '../alerts/alerts.service';
 import { WeatherService } from './weather.service';
+import { TelegramService } from '../telegram/telegram.service';
 
 @Injectable()
 export class WeatherScheduler {
@@ -13,6 +14,7 @@ export class WeatherScheduler {
   constructor(
     private readonly alertsService: AlertsService,
     private readonly weatherService: WeatherService,
+    private readonly telegramService: TelegramService,
   ) {}
 
   @Cron('*/5 * * * *')
@@ -27,16 +29,24 @@ export class WeatherScheduler {
 
       try {
         const weather =
-          await this.weatherService.getWeather(
+          await this.weatherService.getCurrentWeather(
             alert.city,
           );
 
+        await this.telegramService.sendAlert({
+          title: alert.title,
+          city: alert.city,
+          severity: alert.severity,
+          description: `${weather.weather[0].main}
+Temperature: ${weather.main.temp}°C`,
+        });
+
         this.logger.log(
-          `${alert.city}: ${weather.main.temp}°C`,
+          `Telegram alert sent for ${alert.city}`,
         );
       } catch (error) {
         this.logger.error(
-          `Failed to fetch weather for ${alert.city}`,
+          `Failed to process ${alert.city}`,
           error instanceof Error
             ? error.message
             : String(error),

@@ -10,18 +10,15 @@ export class WeatherService {
     private readonly config: ConfigService,
   ) {}
 
-  async getWeather(city: string) {
-    const apiKey = this.config.get<string>('OPENWEATHER_API_KEY');
-
-    console.log('Weather API Key:', apiKey);
+  async getCurrentWeather(city: string) {
+    const apiKey =
+      this.config.get<string>('OPENWEATHER_API_KEY');
 
     const url =
       `https://api.openweathermap.org/data/2.5/weather` +
       `?q=${city}` +
       `&appid=${apiKey}` +
       `&units=metric`;
-
-    console.log('Weather URL:', url);
 
     const response = await firstValueFrom(
       this.http.get(url),

@@ -1,8 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Alert } from './schemas/alert.schema';
+
+import { CreateAlertDto } from './dto/create-alert.dto';
+import { UpdateAlertDto } from './dto/update-alert.dto';
 
 @Injectable()
 export class AlertsService {
@@ -11,57 +18,58 @@ export class AlertsService {
     private readonly alertModel: Model<Alert>,
   ) {}
 
-  async findAll() {
-    return this.alertModel.find().sort({ createdAt: -1 });
-  }
-
-  async findById(id: string) {
-    return this.alertModel.findById(id);
-  }
-
-  async create(data: {
-    title: string;
-    description: string;
-    city: string;
-    severity: string;
-    enabled?: boolean;
-  }) {
-    const alert = new this.alertModel({
-      ...data,
-      enabled: data.enabled ?? true,
-    });
-
+  async create(createAlertDto: CreateAlertDto) {
+    const alert = new this.alertModel(createAlertDto);
     return alert.save();
+  }
+
+  async findAll() {
+    return this.alertModel
+      .find()
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
+  async findOne(id: string) {
+    const alert = await this.alertModel.findById(id);
+
+    if (!alert) {
+      throw new NotFoundException('Alert not found');
+    }
+
+    return alert;
   }
 
   async update(
     id: string,
-    data: Partial<{
-      title: string;
-      description: string;
-      city: string;
-      severity: string;
-      enabled: boolean;
-    }>,
+    updateAlertDto: UpdateAlertDto,
   ) {
-    return this.alertModel.findByIdAndUpdate(id, data, {
-      new: true,
-    });
-  }
-
-  async delete(id: string) {
-    return this.alertModel.findByIdAndDelete(id);
-  }
-
-  async toggle(id: string) {
-    const alert = await this.alertModel.findById(id);
+    const alert =
+      await this.alertModel.findByIdAndUpdate(
+        id,
+        updateAlertDto,
+        {
+          new: true,
+        },
+      );
 
     if (!alert) {
-      return null;
+      throw new NotFoundException('Alert not found');
     }
 
-    alert.enabled = !alert.enabled;
+    return alert;
+  }
 
-    return alert.save();
+  async remove(id: string) {
+    const alert =
+      await this.alertModel.findByIdAndDelete(id);
+
+    if (!alert) {
+      throw new NotFoundException('Alert not found');
+    }
+
+    return {
+      message: 'Alert deleted successfully',
+    };
   }
 }

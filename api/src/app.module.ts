@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { AlertsModule } from './alerts/alerts.module';
 import { TelegramModule } from './telegram/telegram.module';
+import { WeatherModule } from './weather/weather.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TelegramModule } from './telegram/telegram.module';
     AdminModule,
     AlertsModule,
     TelegramModule,
+    WeatherModule,
   ],
 })
 export class AppModule {}

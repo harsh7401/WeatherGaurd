@@ -1,26 +1,41 @@
 import { useState } from "react";
 
+import type { Alert } from "../../types/alert";
+
 type Props = {
+  initialData?: Alert | null;
+
   onSubmit: (data: {
     title: string;
     description: string;
     city: string;
-    severity: string;
+    severity: Alert["severity"];
   }) => void;
 
   onCancel: () => void;
 };
 
 export default function AlertForm({
+  initialData,
   onSubmit,
   onCancel,
 }: Props) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] =
-    useState("");
-  const [city, setCity] = useState("");
+  const [title, setTitle] = useState(
+    initialData?.title ?? ""
+  );
+
+  const [description, setDescription] = useState(
+    initialData?.description ?? ""
+  );
+
+  const [city, setCity] = useState(
+    initialData?.city ?? ""
+  );
+
   const [severity, setSeverity] =
-    useState("MEDIUM");
+    useState<Alert["severity"]>(
+      initialData?.severity ?? "MEDIUM"
+    );
 
   return (
     <form
@@ -38,18 +53,16 @@ export default function AlertForm({
     >
       <input
         className="w-full rounded-lg border p-3"
-        placeholder="Title"
         value={title}
-        onChange={(e) =>
-          setTitle(e.target.value)
-        }
+        placeholder="Title"
+        onChange={(e) => setTitle(e.target.value)}
       />
 
       <textarea
         className="w-full rounded-lg border p-3"
-        placeholder="Description"
         rows={4}
         value={description}
+        placeholder="Description"
         onChange={(e) =>
           setDescription(e.target.value)
         }
@@ -57,24 +70,24 @@ export default function AlertForm({
 
       <input
         className="w-full rounded-lg border p-3"
-        placeholder="City"
         value={city}
-        onChange={(e) =>
-          setCity(e.target.value)
-        }
+        placeholder="City"
+        onChange={(e) => setCity(e.target.value)}
       />
 
       <select
         className="w-full rounded-lg border p-3"
         value={severity}
         onChange={(e) =>
-          setSeverity(e.target.value)
+          setSeverity(
+            e.target.value as Alert["severity"]
+          )
         }
       >
-        <option>LOW</option>
-        <option>MEDIUM</option>
-        <option>HIGH</option>
-        <option>CRITICAL</option>
+        <option value="LOW">LOW</option>
+        <option value="MEDIUM">MEDIUM</option>
+        <option value="HIGH">HIGH</option>
+        <option value="CRITICAL">CRITICAL</option>
       </select>
 
       <div className="flex justify-end gap-3">
@@ -90,7 +103,9 @@ export default function AlertForm({
           type="submit"
           className="rounded-lg bg-blue-600 px-5 py-2 text-white"
         >
-          Create Alert
+          {initialData
+            ? "Update Alert"
+            : "Create Alert"}
         </button>
       </div>
     </form>

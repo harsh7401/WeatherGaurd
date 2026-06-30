@@ -1,33 +1,38 @@
 import AlertForm from "./AlertForm";
 
+import type { Alert } from "../../types/alert";
+
 type Props = {
   open: boolean;
-
   onClose: () => void;
+
+  initialData?: Alert | null;
 
   onSubmit: (data: {
     title: string;
     description: string;
     city: string;
-    severity: string;
+    severity: Alert["severity"];
   }) => void;
 };
 
 export default function AlertModal({
   open,
   onClose,
+  initialData,
   onSubmit,
 }: Props) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-xl">
         <h2 className="mb-6 text-2xl font-bold">
-          Create Weather Alert
+          {initialData ? "Edit Alert" : "Create Alert"}
         </h2>
 
         <AlertForm
+          initialData={initialData}
           onSubmit={onSubmit}
           onCancel={onClose}
         />

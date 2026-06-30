@@ -2,51 +2,34 @@ import type { Alert } from "../../types/alert";
 
 type Props = {
   alerts: Alert[];
+  onEdit: (alert: Alert) => void;
+  onDelete: (id: string) => void;
 };
 
 export default function AlertTable({
   alerts,
+  onEdit,
+  onDelete,
 }: Props) {
   return (
     <div className="overflow-hidden rounded-xl bg-white shadow">
       <table className="min-w-full">
         <thead className="bg-slate-100">
           <tr>
-            <th className="px-6 py-4 text-left">
-              Title
-            </th>
-
-            <th className="px-6 py-4 text-left">
-              City
-            </th>
-
-            <th className="px-6 py-4 text-left">
-              Severity
-            </th>
-
-            <th className="px-6 py-4 text-left">
-              Status
-            </th>
-
-            <th className="px-6 py-4 text-center">
-              Actions
-            </th>
+            <th className="px-6 py-4 text-left">Title</th>
+            <th className="px-6 py-4 text-left">City</th>
+            <th className="px-6 py-4 text-left">Severity</th>
+            <th className="px-6 py-4 text-left">Status</th>
+            <th className="px-6 py-4 text-center">Actions</th>
           </tr>
         </thead>
 
         <tbody>
           {alerts.map((alert) => (
-            <tr
-              key={alert._id}
-              className="border-t"
-            >
-              <td className="px-6 py-4">
-                {alert.title}
-              </td>
+            <tr key={alert._id} className="border-t">
+              <td className="px-6 py-4">{alert.title}</td>
 
-              <td className="px-6 py-4">
-                {alert.city}
-              </td>
+              <td className="px-6 py-4">{alert.city}</td>
 
               <td className="px-6 py-4">
                 {alert.severity}
@@ -58,8 +41,22 @@ export default function AlertTable({
                   : "Disabled"}
               </td>
 
-              <td className="px-6 py-4 text-center">
-                Edit | Delete
+              <td className="space-x-3 px-6 py-4 text-center">
+                <button
+                  onClick={() => onEdit(alert)}
+                  className="font-semibold text-blue-600 hover:underline"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() =>
+                    onDelete(alert._id)
+                  }
+                  className="font-semibold text-red-600 hover:underline"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

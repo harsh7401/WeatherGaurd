@@ -1,33 +1,36 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getCurrentUser } from "../../services/auth";
 
-import { useAuth } from "../../context/AuthContext";
-
-function AuthCallback() {
+export default function AuthCallback() {
   const navigate = useNavigate();
-
-  const { login } = useAuth();
+  const [params] = useSearchParams();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
     const token = params.get("token");
 
     if (!token) {
-      navigate("/");
+      navigate("/login");
       return;
     }
 
-    login(token);
+    localStorage.setItem("token", token);
 
-    navigate("/dashboard");
+    const loadUser = async () => {
+      try {
+        const user = await getCurrentUser();
+
+        localStorage.setItem("user", JSON.stringify(user));
+
+        navigate("/dashboard");
+      } catch (error) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+    };
+
+    loadUser();
   }, []);
 
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      Logging in...
-    </div>
-  );
+  return <h2>Signing you in...</h2>;
 }
-
-export default AuthCallback;

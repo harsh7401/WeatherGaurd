@@ -1,13 +1,30 @@
 import { useEffect, useState } from "react";
 
-import StatsCard from "../../components/dashboard/StatsCard";
-
 import { getDashboardStats } from "../../services/admin";
 
-import type { DashboardStats } from "../../types/dashboard";
+import StatsCard from "../../components/dashboard/StatsCard";
+
+interface DashboardStats {
+  totalUsers: number;
+  pendingUsers: number;
+  approvedUsers: number;
+  rejectedUsers: number;
+  recentUsers: {
+    _id: string;
+    name: string;
+    email: string;
+    status: string;
+  }[];
+}
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalUsers: 0,
+    pendingUsers: 0,
+    approvedUsers: 0,
+    rejectedUsers: 0,
+    recentUsers: [],
+  });
 
   useEffect(() => {
     async function loadDashboard() {
@@ -22,55 +39,65 @@ export default function Dashboard() {
     loadDashboard();
   }, []);
 
-  if (!stats) {
-    return <h2>Loading Dashboard...</h2>;
-  }
-
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-3xl font-bold text-slate-800">
           Dashboard
         </h1>
 
-        <p className="text-gray-500">
+        <p className="mt-2 text-slate-500">
           WeatherGuard Admin Overview
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
         <StatsCard
           title="Total Users"
           value={stats.totalUsers}
+          color="text-blue-600"
         />
 
         <StatsCard
           title="Pending Users"
           value={stats.pendingUsers}
+          color="text-amber-500"
         />
 
         <StatsCard
           title="Approved Users"
           value={stats.approvedUsers}
+          color="text-green-600"
         />
 
         <StatsCard
           title="Rejected Users"
           value={stats.rejectedUsers}
+          color="text-red-600"
         />
       </div>
 
-      <div className="rounded-xl bg-white p-6 shadow">
-        <h2 className="mb-4 text-xl font-semibold">
-          Recent Users
-        </h2>
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 px-6 py-4">
+          <h2 className="text-xl font-semibold">
+            Recent Users
+          </h2>
+        </div>
 
         <table className="min-w-full">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2 text-left">Name</th>
-              <th className="py-2 text-left">Email</th>
-              <th className="py-2 text-left">Status</th>
+          <thead className="bg-slate-100">
+            <tr>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                Name
+              </th>
+
+              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                Email
+              </th>
+
+              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
+                Status
+              </th>
             </tr>
           </thead>
 
@@ -78,17 +105,17 @@ export default function Dashboard() {
             {stats.recentUsers.map((user) => (
               <tr
                 key={user._id}
-                className="border-b"
+                className="border-t border-slate-200 hover:bg-slate-50"
               >
-                <td className="py-3">
+                <td className="px-6 py-4">
                   {user.name}
                 </td>
 
-                <td className="py-3">
+                <td className="px-6 py-4">
                   {user.email}
                 </td>
 
-                <td className="py-3">
+                <td className="px-6 py-4 font-medium">
                   {user.status}
                 </td>
               </tr>

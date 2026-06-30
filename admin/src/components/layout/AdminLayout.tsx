@@ -5,20 +5,16 @@ import Topbar from "../topbar/Topbar";
 
 export default function AdminLayout() {
   return (
-    <div className="flex">
-
+    <div className="flex h-screen bg-slate-100">
       <Sidebar />
 
-      <div className="flex-1 bg-slate-100 min-h-screen">
-
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar />
 
-        <div className="p-8">
+        <main className="flex-1 overflow-y-auto p-8">
           <Outlet />
-        </div>
-
+        </main>
       </div>
-
     </div>
   );
 }

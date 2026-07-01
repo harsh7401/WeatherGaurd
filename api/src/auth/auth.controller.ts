@@ -36,9 +36,9 @@ export class AuthController {
       process.env.FRONTEND_URL ||
       'http://localhost:5173';
 
-    return res.redirect(
-      `${frontend}/auth/callback?token=${result.accessToken}`,
-    );
+   return res.redirect(
+  `${process.env.FRONTEND_URL}/auth/callback?token=${result.accessToken}`,
+);
   }
 
   @Get('me')

@@ -5,12 +5,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 
 import { AuthService } from './auth.service';
 
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { resolveFrontendUrl } from './frontend-url';
 
 @Controller('auth')
 export class AuthController {
@@ -27,18 +28,15 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleCallback(
-    @Req() req: any,
+    @Req() req: Request & { user: any },
     @Res() res: Response,
   ) {
     const result = await this.authService.login(req.user);
+    const frontendUrl = resolveFrontendUrl(req);
 
-    const frontend =
-      process.env.FRONTEND_URL ||
-      'http://localhost:5173';
-
-   return res.redirect(
-  `${process.env.FRONTEND_URL}/auth/callback?token=${result.accessToken}`,
-);
+    return res.redirect(
+      `${frontendUrl}/auth/callback?token=${result.accessToken}`,
+    );
   }
 
   @Get('me')
